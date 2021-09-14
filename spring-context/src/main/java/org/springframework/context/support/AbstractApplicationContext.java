@@ -567,8 +567,9 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 			/*准刷新上下文件*/
 			prepareRefresh();
 
-			/*获取BeanFactory工厂(创建容器)*/
+			/*获取一个新的BeanFactory工厂(创建容器)*/
 			// Tell the subclass to refresh the internal bean factory.
+			/*通知子类去刷新内部的bean Factory*/
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
 			/*BeanFactory前期准备工作,对BeanFactory进行属性填充*/
@@ -648,7 +649,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected void prepareRefresh() {
 		// Switch to active.
-		/*设置开始时间，关闭状态、上下文的活动状态*/
+		/*设置启动时间，关闭状态、上下文的活动状态*/
 		this.startupDate = System.currentTimeMillis();
 		this.closed.set(false);
 		this.active.set(true);
@@ -671,7 +672,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		getEnvironment().validateRequiredProperties();
 
 		// Store pre-refresh ApplicationListeners...
-		/*保证所有ApplicationListener*/
+		/*保存所有ApplicationListener*/
 		if (this.earlyApplicationListeners == null) {
 			this.earlyApplicationListeners = new LinkedHashSet<>(this.applicationListeners);
 		}
@@ -717,7 +718,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 		beanFactory.setBeanClassLoader(getClassLoader());
 		/*是否使用SPEL表达式*/
 		if (!shouldIgnoreSpel) {
-			/*设置SPEL解析器*/
+			/*设置SPEL默认解析器*/
 			beanFactory.setBeanExpressionResolver(new StandardBeanExpressionResolver(beanFactory.getBeanClassLoader()));
 		}
 		beanFactory.addPropertyEditorRegistrar(new ResourceEditorRegistrar(this, getEnvironment()));
@@ -939,6 +940,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 					beanFactory.getBean(CONVERSION_SERVICE_BEAN_NAME, ConversionService.class));
 		}
 
+		/*如果没有BeanFactoryPostProcessor，则注册默认的嵌入式值解析器*/
 		// Register a default embedded value resolver if no BeanFactoryPostProcessor
 		// (such as a PropertySourcesPlaceholderConfigurer bean) registered any before:
 		// at this point, primarily for resolution in annotation attribute values.

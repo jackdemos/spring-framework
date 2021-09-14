@@ -6,7 +6,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @project spring
  * @author Oakley
  * @created 2021-09-14 16:55:16:55
- * @package com.taocaicai.learn.entity.com.taocaicai.learn
+ * @package com.taocaicai.learn
  * @description TODO
  * @since: 0.0.0.1
  */
