@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	   xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<bean id="userD" class="com.taocaicai.learn.entity.User">
+		<property name="id" value="151522312"/>
+		<property name="name" value="taocaicaiD"/>
+		<property name="email" value="taocaicaiD@sina.com"/>
+	</bean>
+	<bean id="userC" class="com.taocaicai.learn.entity.User">
+		<constructor-arg index="0" value="12423232"/>
+		<constructor-arg index="1" value="oaklyEe"/>
+		<constructor-arg index="2" value="oakleyE@sina.com"/>
+	</bean>
+
+</beans>

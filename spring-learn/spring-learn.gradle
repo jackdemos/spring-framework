@@ -1,0 +1,23 @@
+plugins {
+    id 'java'
+}
+
+group 'org.taocaicai'
+version '5.3.9'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile(project(":spring-context"))
+    compile(project(":spring-core"))
+    compile(project(":spring-beans"))
+    implementation("org.projectlombok:lombok:1.18.2")
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.7.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine:5.7.0'
+}
+
+test {
+    useJUnitPlatform()
+}

@@ -16,21 +16,8 @@
 
 package org.springframework.context.support;
 
-import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.springframework.beans.BeansException;
 import org.springframework.beans.CachedIntrospectionResults;
 import org.springframework.beans.factory.BeanFactory;
@@ -88,7 +75,25 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.ReflectionUtils;
 
+import java.io.IOException;
+import java.lang.annotation.Annotation;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+/*
+ * ApplicationContext接口一个抽象实现。没有规定用于配置的存储类型
+ * 只实现了公共上下文的功能。使用了模版方法设计模式。
+ * 需要具体的子类实现抽象方法
+ **/
 /**
+ *
  * Abstract implementation of the {@link org.springframework.context.ApplicationContext}
  * interface. Doesn't mandate the type of storage used for configuration; simply
  * implements common context functionality. Uses the Template Method design pattern,
@@ -96,6 +101,7 @@ import org.springframework.util.ReflectionUtils;
  *
  * <p>In contrast to a plain BeanFactory, an ApplicationContext is supposed
  * to detect special beans defined in its internal bean factory:
+ * 自动注册
  * Therefore, this class automatically registers
  * {@link org.springframework.beans.factory.config.BeanFactoryPostProcessor BeanFactoryPostProcessors},
  * {@link org.springframework.beans.factory.config.BeanPostProcessor BeanPostProcessors},
@@ -544,41 +550,64 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	@Override
 	public void refresh() throws BeansException, IllegalStateException {
 		synchronized (this.startupShutdownMonitor) {
+
+			/*TAGS = DefaultApplicationStartup*/
 			StartupStep contextRefresh = this.applicationStartup.start("spring.context.refresh");
 
+			/*
+			 * 前期准备工作:
+			 * 1. 设置启动时间
+			 * 2 设置活跃状态为 true
+			 * 3. 设置关闭状态为 false
+			 * 4、获取Environment对象，加载当前系统属性的值Environment中
+			 * 5、准备监听器和事件集合对象，默认为空集合
+			 *
+			 */
 			// Prepare this context for refreshing.
+			/*准刷新上下文件*/
 			prepareRefresh();
 
+			/*获取BeanFactory工厂(创建容器)*/
 			// Tell the subclass to refresh the internal bean factory.
 			ConfigurableListableBeanFactory beanFactory = obtainFreshBeanFactory();
 
+			/*BeanFactory前期准备工作,对BeanFactory进行属性填充*/
 			// Prepare the bean factory for use in this context.
 			prepareBeanFactory(beanFactory);
 
 			try {
+				/*beanFactory增强器*/
 				// Allows post-processing of the bean factory in context subclasses.
 				postProcessBeanFactory(beanFactory);
 
 				StartupStep beanPostProcess = this.applicationStartup.start("spring.context.beans.post-process");
+
+				/*调用BeanFactoryPostProcessor*/
 				// Invoke factory processors registered as beans in the context.
 				invokeBeanFactoryPostProcessors(beanFactory);
 
+				/*注册BeanPostProcessor增强器*/
 				// Register bean processors that intercept bean creation.
 				registerBeanPostProcessors(beanFactory);
 				beanPostProcess.end();
 
+				/*国际化*/
 				// Initialize message source for this context.
 				initMessageSource();
 
+				/*初始化此上下文的事件多路广播器*/
 				// Initialize event multicaster for this context.
 				initApplicationEventMulticaster();
 
+				/*留给子类来初始化其它的 bean */
 				// Initialize other special beans in specific context subclasses.
 				onRefresh();
 
+				/*检查监听器并注册*/
 				// Check for listener beans and register them.
 				registerListeners();
 
+				/*实例化所有剩余的单例bean (非懒加载)*/
 				// Instantiate all remaining (non-lazy-init) singletons.
 				finishBeanFactoryInitialization(beanFactory);
 
@@ -593,9 +622,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 				}
 
 				// Destroy already created singletons to avoid dangling resources.
+				/*如查启动失败，则销毁所注册的bean*/
 				destroyBeans();
 
 				// Reset 'active' flag.
+				/*重置 active 标志位*/
 				cancelRefresh(ex);
 
 				// Propagate exception to caller.
@@ -617,6 +648,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	 */
 	protected void prepareRefresh() {
 		// Switch to active.
+		/*设置开始时间，关闭状态、上下文的活动状态*/
 		this.startupDate = System.currentTimeMillis();
 		this.closed.set(false);
 		this.active.set(true);
@@ -635,9 +667,11 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 
 		// Validate that all properties marked as required are resolvable:
 		// see ConfigurablePropertyResolver#setRequiredProperties
+		/*验证环境需要的属性,将确保所有属性是可以被解析的*/
 		getEnvironment().validateRequiredProperties();
 
 		// Store pre-refresh ApplicationListeners...
+		/*保证所有ApplicationListener*/
 		if (this.earlyApplicationListeners == null) {
 			this.earlyApplicationListeners = new LinkedHashSet<>(this.applicationListeners);
 		}
@@ -662,6 +696,7 @@ public abstract class AbstractApplicationContext extends DefaultResourceLoader
 	}
 
 	/**
+	 * 通知子类刷新内部的beanFactory
 	 * Tell the subclass to refresh the internal bean factory.
 	 * @return the fresh BeanFactory instance
 	 * @see #refreshBeanFactory()
