@@ -1,7 +1,5 @@
 package com.taocaicai.learn.entity;
 
-import lombok.Data;
-
 /**
  * @project spring
  * @author Oakley
@@ -10,7 +8,6 @@ import lombok.Data;
  * @description TODO
  * @since: 0.0.0.1
  */
-@Data
 public class User {
   private String id;
   private String name;

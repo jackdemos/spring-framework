@@ -1,7 +1,5 @@
 package com.taocaicai.learn.entity;
 
-import lombok.Data;
-
 /**
  * @project spring
  * @author Oakley
@@ -10,8 +8,23 @@ import lombok.Data;
  * @description TODO
  * @since: 0.0.0.1
  */
-@Data
 public class A {
 	private  String name;
 	private B b;
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public B getB() {
+		return b;
+	}
+
+	public void setB(B b) {
+		this.b = b;
+	}
 }
