@@ -12,7 +12,8 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  */
 public class MyApplication {
   public static void main(String[] args) {
-	  ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("application.xml","application2.xml");
+//	  ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("application.xml","application2.xml");
+	  ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext("application3.xml");
 	  String[] beanDefinitionNames = context.getBeanDefinitionNames();
     for (String beanDefinitionName : beanDefinitionNames) {
       System.out.println(beanDefinitionName);
